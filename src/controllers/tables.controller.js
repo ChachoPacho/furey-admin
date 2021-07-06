@@ -38,7 +38,7 @@ const createElement = (req, res) => {
     let data = req.body;
 
     for (let col in req.body) {
-        getData()
+        _getData({table: req.params.table, tableid: col})
     }
 
     if (table.value()) table.push(req.body).write();

@@ -1,8 +1,8 @@
 const { Router } = require('express');
 const router = Router();
-const { Pool } = require('pg');
+const { Client } = require('pg');
 
-const pool = new Pool({
+const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
@@ -24,18 +24,15 @@ router.get('/utilities', (req, res) => res.render('utilities'));
 
 router.get('/tables/:table', (req, res) => res.render('tables', {title: req.params.table}));
 
-router.get('/db', async (req, res) => {
-    try {
-      const client = await pool.connect();
-      const result = await client.query('SELECT * FROM test_table');
-      const results = { 'results': (result) ? result.rows : null};
-      res.render('pages/db', results );
-      client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error " + err);
+router.get('/db', (req, res) => {
+  client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+    if (err) throw err;
+    for (let row of res.rows) {
+      console.log(JSON.stringify(row));
     }
-  })
+    client.end();
+  });
+})
 
 
 //POST REQUEST

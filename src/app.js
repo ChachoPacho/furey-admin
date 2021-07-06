@@ -9,7 +9,8 @@ const { createConnection } = require("./database");
 createConnection();
 
 const { getConnection } = require('./database');
-const tables = 
+
+console.log(process.env.DATABASE_URL)
 
 //settings
 app.set('port', process.env.PORT || 3000);
