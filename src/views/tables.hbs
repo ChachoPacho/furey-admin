@@ -1,0 +1,226 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">SECCIÓN TABLAS</h1>
+
+    <div class="row d-flex justify-content-around">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-md font-weight-bold text-success text-uppercase">Crear Entrada:
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div type="button" class="btn btn-circle btn-success" data-toggle="modal"
+                                data-target="#tableModal" onclick="changeModaltoCreate('{{title}}')">
+                                <i class="fas fa-plus fa-2x text-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-md font-weight-bold text-info text-uppercase">Crear Relación:
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div type="button" class="btn btn-circle btn-info" data-toggle="modal"
+                                data-target="#createModal">
+                                <i class="fas fa-plus fa-2x text-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-md font-weight-bold text-warning text-uppercase">Añadir Columna:
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div type="button" class="btn btn-circle btn-warning" data-toggle="modal"
+                                data-target="#appendModal">
+                                <i class="fas fa-plus fa-2x text-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-md font-weight-bold text-danger text-uppercase mb-1">Eliminar:</div>
+                        </div>
+                        <div class="col-auto">
+                            <div type="button" class="btn btn-circle btn-danger" data-toggle="modal"
+                                data-target="#deleteModal">
+                                <i class="fas fa-trash fa-lg text-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Tabla de <span class="text-capitalize">{{title}}</span></h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="tableModal" tabindex="-1" aria-labelledby="tableModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tableModalLabel">Crear Entrada</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/tables/{{title}}" method="PUT" tableid="{{title}}" id="tableForm">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn" id="tableFormBTN" onclick="$('#tableForm').submit()"
+                    data-dismiss="modal">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="appendModal" tabindex="-1" aria-labelledby="appendModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="appendModalLabel">Crear Columna</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/object" method="PUT" id="appendForm">
+                    <input type="hidden" name="objtype" value="col">
+                    <input type="hidden" name="table" value="{{title}}">
+                    <div class="form-group">
+                        <label for="colNameInput" class="text-capitalize">Nombre de la Columna</label>
+                        <input type="text" name="name" class="form-control" id="colNameInput">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-capitalize">¿Qué tipo de contenido lleva la columna?</label>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="radio" name="type" id="radioString" value="string"
+                                checked>
+                            <label class="form-check-label" for="radioString">Texto</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="radio" name="type" id="radioNum" value="num">
+                            <label class="form-check-label" for="radioNum">Numérico</label>
+                        </div>
+                        <div class="form-check ms-4">
+                            <input class="form-check-input" type="radio" name="type" id="radioBool" value="bool">
+                            <label class="form-check-label" for="radioBool">Verdadero/Falso</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="selectAppendForm" class="text-capitalize">Insertar a la izquierda de:</label>
+                        <select class="custom-select custom-select-md text-capitalize" name="beforeof"
+                            id="selectAppendForm">
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="appendFormBTN" onclick="$('#appendForm').submit()"
+                    data-dismiss="modal">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/object/{{title}}" method="DELETE" id="deleteForm">
+                    <h4>Eliminar toda la Tabla:</h4>
+                    <div class="form-check ms-4">
+                        <input type="checkbox" class="form-check-input" name="full" value="full"
+                            id="deleteCheckItemFull">
+                        <label class="form-check-label" for="deleteCheckItemFull">Eliminar COMPLETAMENTE
+                            {{title}}</label>
+                    </div>
+                    <h4 class="mt-2">Eliminar Columnas:</h4>
+                    <div class="ms-4" id="deleteCheckBoxCol"></div>
+                    <h4 class="mt-2">Eliminar Relaciones:</h4>
+                    <div class="ms-4" id="deleteCheckBoxRel"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="deleteFormBTN" onclick="$('#deleteForm').submit()"
+                    data-dismiss="modal">ELIMINAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fillTBodyTable('');
+        fillFormTable();
+    });
+</script>
