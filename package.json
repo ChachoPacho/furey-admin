@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --ignore db.json src"
+    "dev": "nodemon --ignore db.json src",
+    "start": "node --ignore db.json src/index.js"
   },
   "author": "",
   "license": "ISC",
