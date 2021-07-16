@@ -1,71 +1,62 @@
-function sendDeleteRequest(table, id) {
-  event.preventDefault()
-  $.ajax({
-    url: '/tables/' + table + '/' + id,
+const deleteElements = () => {
+  const checkeds = $("td > input[type=checkbox]:checked").parents('tr');
+  let ids = [];
+  checkeds.each(function () { ids.push($(this).attr('id')) });
+  return $.ajax({
     type: 'DELETE',
-    data: id,
-    success: function () {
-      $('#' + id).remove();
+    url: window.location,
+    data: {
+      ids
+    },
+    success: () => {
+      checkeds.remove()
     }
   });
 }
 
-for (const key of ['tableForm', 'appendForm', 'deleteForm']) {
-  const currentForm = $("#" + key);
-  currentForm.bind("submit", function (e) {
+const __afterFill = () => {
+  $(".fureyForm").bind("submit", function (e) {
     e.preventDefault();
     $.ajax({
       type: $(this).attr("method"),
       url: $(this).attr("action"),
       data: $(this).serialize(),
-      success: function (data) {
-        if (currentForm.attr('origen') === 'settings') {
+      success: () => {
+        if ($(this).attr('origen') === 'settings') {
           fillAsideMenu();
-        } else if (currentForm.attr('origen') === 'utilities') {
-          ''
+        } else if ($(this).attr('origen') === 'utilities') {
+          fillUtilitiesTable();
         } else {
           fillTBodyTable('');
           fillFormTable();
         }
-        $('#' + key)[0].reset();
+        $(this)[0].reset();
       },
-      error: function (data) {
+      error: data => {
         window.location.href = data.responseText;
       }
     });
   });
-};
+}
 
-function getElements(table, data) {
+const getElements = (data) => {
   return $.ajax({
     type: 'POST',
-    url: '/tables/' + table,
-    data: data,
-    success: function (data) {
-      return data
+    url: window.location,
+    data,
+    success: e => {
+      return e
     }
   });
 }
 
-function getElement(table, id) {
-  return $.ajax({
-    type: 'POST',
-    url: '/tables/' + table + '/' + id,
-    data: '',
-    success: function (data) {
-      return data
-    }
-  });
-}
-
-
-function getData(data) {
+const getData = data => {
   return $.ajax({
     type: 'POST',
     url: '/admin',
     data,
-    success: function (data) {
-      return data
+    success: e => {
+      return e
     }
   });
 }

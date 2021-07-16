@@ -1,96 +1,28 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
-
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">SECCIÓN TABLAS</h1>
-
-    <div class="row d-flex justify-content-around">
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-md font-weight-bold text-success text-uppercase">Crear Entrada:
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <div type="button" class="btn btn-circle btn-success" data-toggle="modal"
-                                data-target="#tableModal" onclick="changeModaltoCreate('{{title}}')">
-                                <i class="fas fa-plus fa-2x text-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-md font-weight-bold text-info text-uppercase">Crear Relación:
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <div type="button" class="btn btn-circle btn-info" data-toggle="modal"
-                                data-target="#createModal">
-                                <i class="fas fa-plus fa-2x text-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-md font-weight-bold text-warning text-uppercase">Añadir Columna:
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <div type="button" class="btn btn-circle btn-warning" data-toggle="modal"
-                                data-target="#appendModal">
-                                <i class="fas fa-plus fa-2x text-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-md font-weight-bold text-danger text-uppercase mb-1">Eliminar:</div>
-                        </div>
-                        <div class="col-auto">
-                            <div type="button" class="btn btn-circle btn-danger" data-toggle="modal"
-                                data-target="#deleteModal">
-                                <i class="fas fa-trash fa-lg text-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 d-flex">
             <h6 class="m-0 font-weight-bold text-primary">Tabla de <span class="text-capitalize">{{title}}</span></h6>
+            <div class="ms-auto">
+                <div type="button" class="btn btn-success" data-toggle="modal" data-target="#tableModal"
+                    onclick="changeModaltoCreate('{{title}}')">
+                    Entrada
+                </div>
+                <div type="button" class="btn btn-warning" data-toggle="modal" data-target="#appendModal">
+                    Columnas
+                </div>
+                <div type="button" class="btn btn-info" data-toggle="modal" data-target="#createModal">
+                    Funciones
+                </div>
+                <div type="button" class="btn btn-danger" onclick="deleteElements()" id="deleteChecked">
+                    Eliminar
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="dataTable" tableid="{{title}}" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                         </tr>
@@ -105,7 +37,6 @@
             </div>
         </div>
     </div>
-
 </div>
 <!-- /.container-fluid -->
 
@@ -121,7 +52,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/tables/{{title}}" method="PUT" tableid="{{title}}" id="tableForm">
+                <form action="/tables/{{title}}" method="PUT" id="tableForm" class="fureyForm">
                 </form>
             </div>
             <div class="modal-footer">
@@ -134,50 +65,37 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="appendModal" tabindex="-1" aria-labelledby="appendModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="appendModalLabel">Crear Columna</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="/admin/object" method="PUT" id="appendForm">
-                    <input type="hidden" name="objtype" value="col">
-                    <input type="hidden" name="table" value="{{title}}">
-                    <div class="form-group">
-                        <label for="colNameInput" class="text-capitalize">Nombre de la Columna</label>
-                        <input type="text" name="name" class="form-control" id="colNameInput">
+            <button type="button" class="close ms-auto me-3" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <form class="row">
+                <div class="col-12">
+                    <div class="modal-header pt-0">
+                        <h5 class="modal-title">OPERACIÓN</h5>
                     </div>
-                    <div class="form-group">
-                        <label class="text-capitalize">¿Qué tipo de contenido lleva la columna?</label>
-                        <div class="form-check ms-4">
-                            <input class="form-check-input" type="radio" name="type" id="radioString" value="string"
-                                checked>
-                            <label class="form-check-label" for="radioString">Texto</label>
-                        </div>
-                        <div class="form-check ms-4">
-                            <input class="form-check-input" type="radio" name="type" id="radioNum" value="num">
-                            <label class="form-check-label" for="radioNum">Numérico</label>
-                        </div>
-                        <div class="form-check ms-4">
-                            <input class="form-check-input" type="radio" name="type" id="radioBool" value="bool">
-                            <label class="form-check-label" for="radioBool">Verdadero/Falso</label>
-                        </div>
+                </div>
+                <div class="col-6">
+                    <div class="modal-header pt-0">
+                        <h5 class="modal-title">VISIBLES</h5>
                     </div>
-                    <div class="form-group">
-                        <label for="selectAppendForm" class="text-capitalize">Insertar a la izquierda de:</label>
-                        <select class="custom-select custom-select-md text-capitalize" name="beforeof"
-                            id="selectAppendForm">
-                        </select>
+                    <div class="modal-body">
                     </div>
-                </form>
-            </div>
+                </div>
+                <div class="col-6">
+                    <div class="modal-header pt-0">
+                        <h5 class="modal-title">PERMANENTE</h5>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                </div>
+
+            </form>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" id="appendFormBTN" onclick="$('#appendForm').submit()"
+                <button type="button" class="btn btn-success" id="createFormBTN" onclick="$('#createForm').submit()"
                     data-dismiss="modal">Crear</button>
             </div>
         </div>
@@ -185,41 +103,69 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="appendModal" tabindex="-1" aria-labelledby="appendModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Eliminar</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div>
+                <button type="button" class="close mx-3 mt-1" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form action="/admin/object/{{title}}" method="DELETE" id="deleteForm">
-                    <h4>Eliminar toda la Tabla:</h4>
-                    <div class="form-check ms-4">
-                        <input type="checkbox" class="form-check-input" name="full" value="full"
-                            id="deleteCheckItemFull">
-                        <label class="form-check-label" for="deleteCheckItemFull">Eliminar COMPLETAMENTE
-                            {{title}}</label>
+            <div class="row">
+                <div class="col-12 col-md-7">
+                    <div class="modal-header pt-0">
+                        <h5 class="modal-title" id="appendModalLabel">Creación</h5>
                     </div>
-                    <h4 class="mt-2">Eliminar Columnas:</h4>
-                    <div class="ms-4" id="deleteCheckBoxCol"></div>
-                    <h4 class="mt-2">Eliminar Relaciones:</h4>
-                    <div class="ms-4" id="deleteCheckBoxRel"></div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="deleteFormBTN" onclick="$('#deleteForm').submit()"
-                    data-dismiss="modal">ELIMINAR</button>
+                    <div class="modal-body">
+                        <form action="/admin/object" method="PUT" id="appendForm" class="fureyForm">
+                            <input type="hidden" name="object" value="{{title}}">
+                            <input type="hidden" name="objtype" value="col">
+                            <input type="hidden" name="tableid" value="{{title}}">
+                            <div class="form-group">
+                                <label for="colNameInput" class="text-capitalize">Nombre de la Columna</label>
+                                <input type="text" name="name" class="form-control" id="colNameInput">
+                            </div>
+                            <div class="form-group">
+                                <label for="selectAppendForm" class="text-capitalize">Insertar a la izquierda de:</label>
+                                <select class="custom-select custom-select-md text-capitalize" name="beforeof"
+                                    id="selectAppendForm">
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="appendFormBTN" onclick="$('#appendForm').submit()"
+                            data-dismiss="modal">Crear</button>
+                    </div>
+                </div>
+                <div class="col-12 col-md-5">
+                    <div class="modal-header pt-0">
+                        <h5 class="modal-title">Eliminación</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/object/{{title}}" method="DELETE" id="deleteForm" class="fureyForm">
+                            <input type="hidden" name="object" value="{{title}}">
+                            <input type="hidden" name="tableid" value="{{title}}">
+                            <div class="form-check ms-4">
+                                <input type="checkbox" class="form-check-input" name="full" value="full"
+                                    id="deleteCheckItemFull">
+                                <label class="form-check-label" for="deleteCheckItemFull"><strong>TODO</strong></label>
+                            </div>
+                            <div class="ms-4" id="deleteCheckBoxCol"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="deleteFormBTN" onclick="$('#deleteForm').submit()"
+                            data-dismiss="modal">ELIMINAR</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         fillTBodyTable('');
         fillFormTable();
     });

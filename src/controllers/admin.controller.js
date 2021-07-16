@@ -1,124 +1,128 @@
 const {
     getConnection
 } = require('../database');
-const typesCont = {
-    "string": '',
-    "num": 0,
-    "bool": true,
-}
 
-//CONFIG INFORMATION
-const _getData = async (req) => {
-    const config = await getConnection().get('admin');
-
-    let configData = {};
-
-    if (req.table) {
-        if (req.tableid) {
-            configData['table'] = config.get('tables').get(req.tableid).value();
-        } else {
-            configData['table'] = config.get('tables').value();
+class ADMIN {
+    #objects = {
+        create: {
+            table: 'this.#createTable()',
+            col: 'this.#createCol()'
+        },
+        update: {
+            util: 'this.#updateUtil()',
+            col: 'this.#updateCol()'
         }
     }
 
-    return configData;
+    constructor(req, res) {
+        this.params = req.params;
+        this.body = req.body;
+        this.res = res;
+        this.req = req;
+
+        this.DB = getConnection().get('tables');
+        //FULL ADMIN PETITIONS
+        this.tables = getConnection().get('admin.tables');
+
+        this.tableName = (this.body.tableid || this.params.id || '').toLowerCase();
+        this.table = (this.tableName) ? this.tables.get(this.tableName) : '';
+
+        //FULL TABLE OBJECTS PETITIONS
+        this.object = this.DB.get(this.body.object);
+        this.name = (this.body.name || this.body.field || '').toLowerCase();
+    }
+
+    //CONFIG INFORMATION
+    get data() {
+        let configData = {};
+
+        if (this.tables) {
+            if (this.table) {
+                configData['table'] = this.table.value();
+            } else {
+                configData['table'] = this.tables.value();
+            }
+        }
+
+        this.res.send(configData);
+    }
+
+    //CUD OBJECTS
+    #createCol() {
+        //AÑADE LA COLUMNA EN LA POSICIÓN DADA, EN ADMIN.TABLES
+        const newStructure = this.table.value();
+        (this.body.beforeof === "admin") ? newStructure.__SHOW.push(this.name) : newStructure.__SHOW.splice(newStructure.__SHOW.indexof(this.body.beforeof), 0, this.name);
+        newStructure.__ALL[this.name] = this.name;
+
+        this.table.assign(newStructure).write();
+        //
+    }
+
+    #createTable() {
+        this.DB.set(this.tableName, []).write();
+        this.tables.set(this.tableName, {
+            __SHOW: [],
+            __ALL: {}
+        }).write();
+    }
+
+    setObject() {
+        eval(this.#objects.create[this.body.objtype]);
+
+        this.res.send("Estructura Creado");
+    }
+
+    #updateUtil() {
+        const __ALL = this.table.value().__ALL;
+        const newShow = [];
+        for (let index in Object.keys(__ALL)) {
+            let pos = parseInt(this.body.pos[index]) - 1;
+            if (pos == -1) continue;
+
+            let element = Object.values(__ALL)[index];
+            (newShow[pos]) ? newShow.splice(pos + 1, 0, element): newShow[pos] = element;
+        }
+        this.table.set('__SHOW', newShow.filter(Boolean)).write();
+    }
+
+    async #updateCol() {
+        console.log(this.body.origin, this.name)
+        this.table.get('__ALL').assign({[this.body.origin]: this.name}).write();
+    }
+
+    reSetObject() {
+        eval(this.#objects.update[this.body.objtype]);
+
+        this.res.send("Estructura Actualizado");
+    }
+
+    removeObject() {
+        if (this.body.full) {
+            this.DB.unset(this.params.table).write();
+
+            this.tables.unset(this.params.table).write();
+
+            this.res.status(500).send(req.protocol + '://' + req.hostname + ':' + (process.env.PORT || 3000));
+        } else {
+            if (this.body.col) {
+                for (const col of this.body.col) {
+                    for (const id of this.object.map("id").value()) {
+                        this.object.find({
+                            id
+                        }).unset(col).write();
+                    }
+                    this.table.get('__SHOW').pull(col).write();
+                    this.table.get('__ALL').pull(col).write();
+                }
+            }
+            if (this.body.rel) {
+
+            }
+            this.res.send("Objeto Eliminado");
+        }
+    }
+
 };
 
-const getData = async (req, res) => {
-    res.send(_getData(req.body));
-}
 
-
-//CUD OBJECTS
-const createObject = (req, res) => {
-    const params = req.body;
-    const tableID = params.table.toLowerCase();
-    const config = getConnection().get('admin').get('tables');
-    let newTableParams = {
-        __SHOW: []
-    };
-
-    switch (params.objtype) {
-        case "col":
-            const name = params.name.toLowerCase();
-
-            //RECORRE TODOS LOS OBJETOS Y LES AÑADE LA COLUMNA
-            const table = getConnection().get(params.table);
-            const IDs = table.map("id").value();
-
-            for (const id of IDs) {
-                table.find({
-                    id: id
-                }).set(name, typesCont[params.type]).write();
-            }
-            //
-
-            //AÑADE LA COLUMNA EN LA POSICIÓN DADA, EN ADMIN.TABLES:id
-            newTableParams[name] = params.type;
-            const tableParams = config.get(tableID).value();
-            for (const key of tableParams.__SHOW) {
-                if (key === params.beforeof) newTableParams.__SHOW.push(name);
-                newTableParams.__SHOW.push(key);
-            }
-            if (params.beforeof === "admin") newTableParams.__SHOW.push(name);
-            
-            config.get(tableID).assign(newTableParams).write();
-            //
-            break;
-
-        case "table":
-            getConnection().set(tableID, []).write();
-            config.set(tableID, newTableParams).write();
-            break;
-
-        default:
-            break;
-    }
-
-    res.send("Objeto Creado");
-}
-
-const updateObject = (req, res) => {
-    const data = req.body
-}
-
-const deleteObject = (req, res) => {
-    const data = req.body
-
-    if (data.full) {
-        getConnection().unset(req.params.table).write();
-
-        const config = getConnection().get('admin').get('tables');
-        config.unset(req.params.table).write();
-
-        res.status(500).send(req.protocol + '://' + req.hostname + ':' + (process.env.PORT || 3000));
-    } else {
-        const table = getConnection().get(req.params.table);
-        const config = getConnection().get('admin').get('tables')
-        const IDs = table.map("id").value();
-        if (data.col) {
-            for (const col of data.col) {
-                for (const id of IDs) {
-                    table.find({
-                        id: id
-                    }).unset(col).write();
-                }
-                const tableConfig = config.get(req.params.table);
-                tableConfig.unset(col).write();
-                tableConfig.get('__SHOW').pull(col).write();
-            }
-        }
-        if (data.rel) {
-
-        }
-        res.send("Objeto Eliminado");
-    }
-}
-
-module.exports = {
-    getData,
-    createObject,
-    updateObject,
-    deleteObject,
-    _getData
-}
+module.exports = ADMIN

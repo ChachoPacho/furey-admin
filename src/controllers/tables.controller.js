@@ -1,69 +1,64 @@
 const { getConnection } = require('../database');
-const { _getData } = require('./admin.controller');
 const { v4 } = require('uuid');
 
-//READ METHODS
-const getElements = (req, res) => {
-    const table = getConnection().get(req.params.table);
-    const data = req.body;
-    let filteredTable = table
+class TABLES {
+    constructor(req, res) {
+        this.params = req.params;
+        this.body = req.body;
+        this.res = res;
+        this.req = req;
 
-    if (data.map) filteredTable = table.map(data.map);
-    else if (data.find) {
-        let filter = {};
-        filter[data.find[0]] = data.find[1];
-        filteredTable = table.find(filter);
-    } else if (data.size) filteredTable = table.size();
-    else if (data.specialSearch) filteredTable = getConnection().get(data.specialSearch);
-    else if (data.filter) filteredTable = table.filter(data.filter);
+        this.DB = getConnection().get('tables');
 
-    if (data.sortby) filteredTable = filteredTable.sortBy(data);
-    else if (data.orderby) filteredTable = filteredTable.orderBy(data.orderby[0], data.orderby[1]);
-
-    
-    res.json(filteredTable.value())
-}
-
-const getElement = (req, res) => {
-    const element = getConnection().get(req.params.table).find({id: req.params.id}).value();
-    res.json(element);
-}
-
-
-//CREATE/UPDATE ELEMENTS
-const createElement = (req, res) => {
-    req.body['id'] = v4();
-
-    const table = getConnection().get(req.params.table);
-    let data = req.body;
-
-    for (let col in req.body) {
-        _getData({table: req.params.table, tableid: col})
+        //FULL TABLE OBJECTS PETITIONS
+        this.table = this.DB.get((this.params.table || '').toLowerCase());
     }
 
-    if (table.value()) table.push(req.body).write();
-    else getConnection().set(req.params.table, [req.body]).write();
+    //READ METHODS
+    get data() {
+        let response = this.table;
+        if (this.body.map) response = this.table.map(this.body.map);
+        else if (this.body.search) {
+            response = this.table.find({
+                [this.body.search[0]]: this.body.search[1]
+            });
+        } else if (this.body.filter) response = this.table.filter(this.body.filter);
+    
+        response = (this.body.sortby) ? response.sortBy(this.body) : (this.body.orderby) ? response.orderBy(this.body.orderby[0], this.body.orderby[1]) : response;
+    
+        this.res.json(response.value());
+    }
 
-    res.json("Elemento Creado");
+    __parseBody() {
+        for (const key in this.body) {
+            let element = this.body[key].replace(',', '.');
+            this.body[key] = !element ? "" : isNaN(element) ?  element : parseFloat(element);
+        }
+    }
+
+    //CREATE/UPDATE ELEMENTS
+    setElement() {    
+        this.__parseBody()
+        
+        this.body['id'] = v4();
+        (this.table.value()) ? this.table.push(this.body).write() : this.DB.set(this.params.table, [this.body]).write();
+    
+        this.res.json("Elemento Creado");
+    }
+
+    reSetElement() {
+        this.__parseBody()
+
+        this.table.find({id: this.params.id}).assign(this.body).write()
+        this.res.json("Elemento Actualizado");
+    }
+
+    //DELETE ELEMENTS
+    removeElements() {
+        for (const id of this.body.ids) this.table.remove({id}).write();
+        this.res.send('Elemento Eliminado');
+    }
 }
 
-const updateElement = async (req, res) => {
-    const update = await getConnection().get(req.params.table).find({id: req.params.id}).assign(req.body).write()
-    res.json("Elemento Actualizado");
-}
 
-
-//DELETE ELEMENTS
-const deleteElement = (req, res) => {
-    getConnection().get(req.params.table).remove({id: req.params.id}).write();
-    res.send('Elemento Eliminado')
-}
-
-
-module.exports = {
-    getElements,
-    getElement,
-    createElement,
-    updateElement,
-    deleteElement,
-}
+module.exports = TABLES

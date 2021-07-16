@@ -1,16 +1,10 @@
-const { Router } = require('express');
+const {
+    Router
+} = require('express');
 const router = Router();
-const { Client } = require('pg');
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-
-const { getElements, getElement, createElement, updateElement, deleteElement } = require('../controllers/tables.controller');
-const { getData, createObject, updateObject, deleteObject } = require('../controllers/admin.controller');
+const TABLES = require('../controllers/tables.controller');
+const ADMIN = require('../controllers/admin.controller');
 
 
 //GET REQUEST
@@ -22,39 +16,31 @@ router.get('/test', (req, res) => res.render('test'));
 
 router.get('/utilities', (req, res) => res.render('utilities'));
 
-router.get('/tables/:table', (req, res) => res.render('tables', {title: req.params.table}));
-
-router.get('/db', (req, res) => {
-  client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-    if (err) throw err;
-    for (let row of res.rows) {
-      console.log(JSON.stringify(row));
-    }
-    client.end();
-  });
-})
+router.get('/tables/:table', (req, res) => res.render('tables', {
+    title: req.params.table
+}));
 
 
 //POST REQUEST
-router.post('/admin', getData);
+router.post('/admin', (req, res) => new ADMIN(req, res).data);
 
-router.post('/tables/:table', getElements);
-router.post('/tables/:table/:id', getElement);
+router.post('/tables', (req, res) => new TABLES(req, res).data);
+router.post('/tables/:table', (req, res) => new TABLES(req, res).data);
 //router.post('/admin/:element/:table/:id', updateColumn);
 
 
 //PUT REQUEST
-router.put('/admin/object', createObject);
-router.put('/admin/object/:id', updateObject);
+router.put('/admin/object', (req, res) => new ADMIN(req, res).setObject());
+router.put('/admin/object/:id', (req, res) => new ADMIN(req, res).reSetObject());
 
-router.put('/tables/:table', createElement);
-router.put('/tables/:table/:id', updateElement);
+router.put('/tables/:table', (req, res) => new TABLES(req, res).setElement());
+router.put('/tables/:table/:id', (req, res) => new TABLES(req, res).reSetElement());
 
 
 //DELETE REQUEST
-router.delete('/admin/object/:table', deleteObject);
+router.delete('/admin/object/:table', (req, res) => new ADMIN(req, res).removeObject());
 
-router.delete('/tables/:table/:id', deleteElement);
+router.delete('/tables/:table', (req, res) => new TABLES(req, res).removeElements());
 
 
 module.exports = router;

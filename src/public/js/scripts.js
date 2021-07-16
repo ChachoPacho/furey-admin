@@ -1,11 +1,10 @@
 //GLOBAL
-async function fillAsideMenu() {
-    const elementsNames = await getData({
-        "table": true,
-    });
+const fillAsideMenu = async () => {
     let tables = "";
 
-    for (const key of Object.keys(elementsNames.table)) {
+    for (const key of Object.keys((await getData({
+            "table": true,
+        })).table)) {
         tables += "<a class='collapse-item text-capitalize' href='/tables/" + key + "'>" + key + "</a>"
     }
 
@@ -14,160 +13,150 @@ async function fillAsideMenu() {
 
 
 //TABLES
-async function fillTBodyTable(data) {
-    const table = $("#tableForm").attr("tableid");
-    const elements = await getElements(table, data);
-    const elementsNames = await getData({
+const fillTBodyTable = async data => {
+    const table = $("#dataTable").attr("tableid");
+    let elements = await getElements(data);
+    const search = $('#webSearch').val() || $('#mobileSearch').val();
+    elements = (search) ? filterSearch(elements, search) : elements;
+    const {
+        __ALL,
+        __SHOW
+    } = (await getData({
         "table": true,
         "tableid": table
-    });
+    })).table;
 
-    let tableHeader = '';
-    let tableFooter = '';
+    const order = (data) ? (data.orderby[1] === "desc") ? 'asc' : 'desc' : 'desc';
+
+    let tableHeader = `<th class="text-center" style="width: 50px"><input class="h-100 w-100" type="checkbox" id="checkALL"></th>`;
+    let tableFooter = `<th class="text-center" style="width: 50px"></th>`;
     let tableContEnd = '';
 
     for (const element of elements) {
-        tableContEnd += `<tr id="` + element['id'] + `">`
+        tableContEnd += `
+            <tr id="` + element['id'] + `">
+                <td style="width: 50px">
+                    <input class="h-100 w-100" type="checkbox">
+                </td>
+            `
 
-        for (const index of elementsNames.table.__SHOW) {
+        for (const index of __SHOW) {
             tableContEnd += "<td>" + element[index] + "</td>";
         }
 
         tableContEnd += `
-            <td style="width: 100px">
+            <td style="width: 50px">
                 <div class="d-flex justify-content-around">
-                    <a href="" onclick="changeModaltoUpdate('` + table + `','` + element['id'] + `')" class="btn btn-warning btn-circle btn-sm" data-toggle="modal" data-target="#tableModal" type="button">
+                    <a href="" onclick="changeModaltoUpdate('` + table + "', '" + element['id'] + `')" class="btn btn-warning btn-circle btn-sm" data-toggle="modal" data-target="#tableModal" type="button">
                         <i class="fas fa-flag"></i>
-                    </a>
-                    <a href="" onclick="sendDeleteRequest('` + table + `','` + element['id'] + `')" class="btn btn-danger btn-circle btn-sm">
-                        <i class="fas fa-trash"></i>
                     </a>
                 </div>
             </td>
         </tr>`;
     }
 
-    for (const index of elementsNames.table.__SHOW) {
+    for (const index of __SHOW) {
         tableHeader += `
-        <th class="text-capitalize">
-            <div class="d-flex">
-                <div>${index}</div>
-                <div class="ms-auto" type="button" id="menu-${index}"
-                    onclick="orderBy('${index}','asc')">
-                    <i class="fas fa-arrows-alt-v"></i>
+            <th>
+                <div class="d-flex">
+                    <div class="dropdown">
+                        <div class="dropdown-toggle text-capitalize" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ${__ALL[index]}
+                        </div>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <form class="d-flex fureyForm" action="/admin/object/${table}" method="PUT">
+                                <input type="hidden" name="objtype" value="col">
+                                <input type="hidden" name="origin" value="${index}">
+                                <input class="mt-0 mx-2 p-1 text-capitalize" type="text" name="field" value="${__ALL[index]}">
+                                <button type="submit" class="btn btn-warning me-2 p-1">
+                                    <span class="text">Actualizar</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ms-auto" type="button" id="menu-${index}"
+                        onclick="orderBy('${index}','${order}')">
+                        <i class="fas fa-arrows-alt-v"></i>
+                    </div>
                 </div>
-            </div>
-        </th>
-        `;
+            </th>
+            `;
         tableFooter += `
-        <th class="text-capitalize">
-            <div>${index}</div>
-        </th>
-        `;
+            <th class="text-capitalize">
+                <div>${index}</div>
+            </th>
+            `;
     }
 
-    tableHeader += `<th class="text-center" style="width: 100px !important">ADMIN</th>`;
-    tableFooter += `<th class="text-center" style="width: 100px !important">ADMIN</th>`;
+    tableHeader += `<th class="text-center">ADMIN</th>`;
+    tableFooter += `<th class="text-center">ADMIN</th>`;
 
     $('#dataTable thead tr').html(tableHeader);
     $('#dataTable tfoot tr').html(tableFooter);
     $('#dataTable tbody').html(tableContEnd);
+    table_animate();
 }
 
-async function fillFormTable() {
-    const elementsNames = await getData({
+const fillFormTable = async () => {
+    const {
+        __ALL
+    } = (await getData({
         "table": true,
-        "tableid": $("#tableForm").attr("tableid")
-    });
+        "tableid": $("#dataTable").attr("tableid")
+    })).table;
 
     let table = '';
     let checkBoxCol = '';
     let select = "<option value='admin' selected>ADMIN</option>"
 
-
-    for (const index in elementsNames.table) {
-        if (index === "__SHOW") { continue };
-        table += `
-        <div class="form-group">
-            <label for="${index}" class="text-capitalize">${index}</label>
-            <input type="text" name="${index}" class="form-control" id="${index}FormInput">
-        </div>`;
-        select += `<option value="${index}">${index}</option>`;
+    for (const index in __ALL) {
         checkBoxCol += `
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="col[]" value="${index}" id="deleteCheckItem${index}">
-            <label class="form-check-label text-capitalize" for="deleteCheckItem${index}">${index}</label>
+            <label class="form-check-label text-capitalize" for="deleteCheckItem${index}">${__ALL[index]}</label>
         </div>`;
+        table += `
+        <div class="form-group">
+            <label for="${index}FormInput" class="text-capitalize">${__ALL[index]}</label>
+            <input type="text" name="${index}" class="form-control" id="${index}FormInput">
+        </div>`;
+        select += `<option value="${index}">${__ALL[index]}</option>`;
     }
 
     $('#tableForm').html(table);
     $('#selectAppendForm').html(select);
     $('#deleteCheckBoxCol').html(checkBoxCol);
+    __afterFill();
 }
-
-async function changeModaltoUpdate(table, id) {
-    $('#tableModalLabel').html('Modificar Entrada');
-    const btn = $('#tableFormBTN');
-    btn.html('Actualizar');
-    btn.addClass('btn-warning');
-    btn.removeClass('btn-success');
-    $('#tableForm').attr('action', '/tables/' + table + '/' + id);
-
-    const element = await getElement(table, id);
-    const elementNames = await getData({
-        'table': true,
-        'tableid': table
-    })
-
-    for (const index in elementNames.table) {
-        $('#' + index + 'FormInput').val(element[index]);
-    }
-}
-
-async function changeModaltoCreate(table) {
-    $('#tableModalLabel').html('Crear Entrada');
-    const btn = $('#tableFormBTN');
-    btn.html('Crear');
-    btn.removeClass('btn-warning');
-    btn.addClass('btn-success');
-
-    const modalForm = $('#tableForm');
-    modalForm.attr('action', '/tables/' + table);
-
-    modalForm[0].reset();
-}
-
-function orderBy(namespace, type) {
-    $('#menu-' + namespace).attr('onclick', "orderBy('" + namespace + "', '" + ((type === "desc") ? "asc" : "desc") + "')")
-    fillTBodyTable({
-        orderby: [namespace, type]
-    })
-};
 
 
 //UTILITIES
-async function fillUtilitiesTable() {
-    const elementsNames = await getData({"table": true,});
+const fillUtilitiesTable = async () => {
+    const elementsNames = await getData({
+        "table": true
+    });
 
     let tables = '';
-    let table
     for (const name of Object.keys(elementsNames.table)) {
-        table = '';
-        const elements = await getData({
+        let table = '';
+        const {
+            __ALL,
+            __SHOW
+        } = (await getData({
             "table": true,
             "tableid": name
-        });
+        })).table;
 
-        const qElements = Object.keys(elements.table).length;
-
-        for (const element in elements.table) {
+        const qElements = Object.keys(__ALL).length;
+        for (const element in __ALL) {
+            let pos = (__SHOW.indexOf(element) !== -1) ? __SHOW.indexOf(element) + 1 : 0;
             table += `
             <div class="border-left-dark">
                 <div class="card-body py-2 px-3 text-capitalize">
                     <div class="row">
                         <div class="col-6">${element}</div>
                         <div class="col-6 d-flex">
-                            <input class="w-50 mx-auto" type="number" value="0" name="pos-${element}" min="0" max="${qElements}">
+                            <input class="w-50 mx-auto" type="number" value="${pos}" name="pos[]" min="0" max="${qElements}">
                         </div>
                     </div>
                 </div>
@@ -176,7 +165,7 @@ async function fillUtilitiesTable() {
         }
 
         tables += `
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-6 col-lg-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary text-capitalize">Tabla ${name}</h6>
@@ -186,8 +175,18 @@ async function fillUtilitiesTable() {
                         <div class="col-6 text-center text-gray-900"><strong>Campo</strong></div>
                         <div class="col-6 text-center text-gray-900"><strong>Posición</strong></div>
                     </div>
-                    <form action="/admin/object/${name}" origen="utilities" method="PUT" id="tableForm">
+                    <form action="/admin/object/${name}" origen="utilities" method="PUT" id="utilForm-${name}" class="fureyForm">
+                        <input type="hidden" name="objtype" value="util">
+                        <input type="hidden" name="tableid" value="${name}">
                         ${table}
+                        <div class="d-flex w-100 justify-content-end">
+                            <a class="btn btn-success btn-icon-split w-50 mx-3 mb-1 mt-3 d-flex" onclick="$('#utilForm-${name}').submit()">
+                                <span class="icon text-white-50 me-auto">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="text me-auto">GUARDAR</span>
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -195,4 +194,5 @@ async function fillUtilitiesTable() {
         `;
     }
     $('#utilitiesTable').html(tables);
+    __afterFill();
 }

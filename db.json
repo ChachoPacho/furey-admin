@@ -2,144 +2,147 @@
   "admin": {
     "tables": {
       "products": {
+        "__ALL": {
+          "nombre": "nombre",
+          "categoria": "categoría",
+          "cod": "cod",
+          "precio": "precio"
+        },
         "__SHOW": [
           "nombre",
-          "ventas",
-          "categoria",
           "cod",
           "precio"
-        ],
-        "nombre": "string",
-        "ventas": "num",
-        "categoria": "string",
-        "cod": "string",
-        "precio": "num"
+        ]
       },
       "clientes": {
+        "__ALL": {
+          "teléfono": "teléfono",
+          "nombre": "nombre"
+        },
         "__SHOW": [
           "nombre",
           "teléfono"
-        ],
-        "nombre": "string",
-        "teléfono": "string"
+        ]
       },
       "materiales": {
+        "__ALL": {
+          "telefono": "teléfono",
+          "nombre": "nombre"
+        },
         "__SHOW": [
-          "nombre",
-          "precio"
+          "teléfono",
+          "nombre"
+        ]
+      },
+      "productos": {
+        "__SHOW": [
+          "nombre"
         ],
-        "nombre": "string",
-        "precio": "num"
+        "__ALL": {
+          "nombre": "nombre"
+        }
       }
     }
   },
-  "products": [
-    {
-      "id": "23214234234234",
-      "nombre": "Escobillón",
-      "cod": "1232",
-      "precio": 2500,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "3a195233-e3b0-43ee-aacf-779806c3eaaa",
-      "nombre": "Platos",
-      "cod": "1234",
-      "precio": 124,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "7974f7ae-a93e-4a69-945f-bb978ab0e3e2",
-      "nombre": "Escoba",
-      "cod": 123,
-      "precio": 2500,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "b0d23f5a-f766-41d1-9709-ac02a4f713c5",
-      "nombre": "Porongosaurio",
-      "cod": "2314",
-      "precio": 123,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "cd1b71ef-4df6-434f-842e-1058802a4164",
-      "nombre": "PorongosaurioXL",
-      "cod": "2314",
-      "precio": 1232,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "238de7ca-2573-48af-ba51-6139464f9d73",
-      "nombre": "Nose",
-      "cod": "2314",
-      "precio": 1232,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "f86911d7-b5ba-4d29-a8f0-f7fa1ad69da4",
-      "nombre": "Nose2",
-      "cod": "213",
-      "precio": 123,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "eab11687-8cff-44d7-b2ef-ace677465fee",
-      "nombre": "Aspiradora",
-      "cod": "213",
-      "precio": 123,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "9a090cdf-00f9-4b3f-b411-d3dca2b03414",
-      "nombre": "Cachuna2.0",
-      "cod": "213",
-      "precio": 200,
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "cd1e9eaf-84f2-40b4-a3ce-9bbc0bce3aa7",
-      "nombre": "Jacuna",
-      "cod": "135",
-      "precio": "2700",
-      "categoria": "",
-      "ventas": ""
-    },
-    {
-      "id": "df19b1c0-b5f0-4afc-b44e-08015a5fa76f",
-      "nombre": "Lagarto",
-      "ventas": "17",
-      "categoria": "Animal",
-      "cod": "145",
-      "precio": "9999"
-    }
-  ],
-  "clientes": [
-    {
-      "nombre": "Juan Perez",
-      "teléfono": "2456751",
-      "id": "40477e25-06c5-4900-91dd-7bf9d0464a5b"
-    },
-    {
-      "nombre": "Enzo Rolega",
-      "teléfono": "2486757",
-      "id": "056b3015-a620-4318-a1df-a008596cf1c1"
-    }
-  ],
-  "materiales": [
-    {
-      "nombre": "Juan",
-      "precio": "123",
-      "id": "e696e50e-0a6e-41bf-8c9a-fd8651d95fbc"
-    }
-  ]
+  "tables": {
+    "products": [
+      {
+        "id": "23214234234234",
+        "nombre": "Escobillón",
+        "cod": "1232",
+        "precio": 2500
+      },
+      {
+        "id": "3a195233-e3b0-43ee-aacf-779806c3eaaa",
+        "nombre": "Platos",
+        "cod": "1234",
+        "precio": 124
+      },
+      {
+        "id": "7974f7ae-a93e-4a69-945f-bb978ab0e3e2",
+        "nombre": "Escoba",
+        "cod": 123,
+        "precio": 2500
+      },
+      {
+        "id": "238de7ca-2573-48af-ba51-6139464f9d73",
+        "nombre": "Nose",
+        "cod": "2314",
+        "precio": 1232
+      },
+      {
+        "id": "eab11687-8cff-44d7-b2ef-ace677465fee",
+        "nombre": "Aspiradora",
+        "cod": 213,
+        "precio": 123
+      },
+      {
+        "id": "9a090cdf-00f9-4b3f-b411-d3dca2b03414",
+        "nombre": "Cachuna2.0",
+        "cod": 213,
+        "precio": 200
+      },
+      {
+        "id": "cd1e9eaf-84f2-40b4-a3ce-9bbc0bce3aa7",
+        "nombre": "Jacuna",
+        "cod": 135,
+        "precio": 2700
+      },
+      {
+        "id": "df19b1c0-b5f0-4afc-b44e-08015a5fa76f",
+        "nombre": "Lagarto",
+        "cod": 145,
+        "precio": 9999
+      },
+      {
+        "nombre": "DinoRex",
+        "cod": 1234,
+        "precio": 999,
+        "id": "0716983f-fa21-4665-9d33-9d8faf8c4a1c"
+      },
+      {
+        "nombre": "Termopilas",
+        "cod": 7451,
+        "precio": 12457,
+        "id": "a22e7dfb-6156-472c-9fbd-3a367025ad9b"
+      },
+      {
+        "nombre": "Juguete",
+        "cod": 2,
+        "precio": 150.57,
+        "id": "b5e3f3e1-617d-4cf4-9fa7-5cd18f2f10de"
+      },
+      {
+        "nombre": "Lerolero",
+        "cod": 123,
+        "precio": 750,
+        "id": "2d3cb627-83c5-4c9f-a644-4f61aa69ac71"
+      }
+    ],
+    "clientes": [
+      {
+        "nombre": "Juan Perez",
+        "teléfono": "2456751",
+        "id": "40477e25-06c5-4900-91dd-7bf9d0464a5b"
+      },
+      {
+        "nombre": "Enzo Rolega",
+        "teléfono": "2486757",
+        "id": "056b3015-a620-4318-a1df-a008596cf1c1"
+      }
+    ],
+    "materiales": [
+      {
+        "nombre": "Gonzalo",
+        "telefono": 547345,
+        "id": "1b4e38a2-5624-464a-9ed2-2b77e2bf12e7"
+      },
+      {
+        "nombre": "Juan",
+        "telefono": 546875135,
+        "id": "f0856a8d-c2ab-4dc9-9b29-62634016f5dc"
+      }
+    ],
+    "productos": []
+  }
 }
