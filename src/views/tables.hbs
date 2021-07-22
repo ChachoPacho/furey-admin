@@ -2,20 +2,22 @@
 <div class="container-fluid">
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex">
-            <h6 class="m-0 font-weight-bold text-primary">Tabla de <span class="text-capitalize">{{title}}</span></h6>
-            <div class="ms-auto">
-                <div type="button" class="btn btn-success" data-toggle="modal" data-target="#tableModal"
-                    onclick="changeModaltoCreate('{{title}}')">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary w-100">Tabla de <span class="text-capitalize">{{title}}</span></h6>
+            <div class="d-flex flex-wrap justify-content-end">
+                <div type="button" class="btn btn-success" data-toggle="modal" data-target="#tableModal">
                     Entrada
                 </div>
-                <div type="button" class="btn btn-warning" data-toggle="modal" data-target="#appendModal">
+                <div type="button" class="btn btn-info" data-toggle="modal" data-target="#appendModal">
                     Columnas
                 </div>
-                <div type="button" class="btn btn-info" data-toggle="modal" data-target="#createModal">
+                <div type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal">
                     Funciones
                 </div>
-                <div type="button" class="btn btn-danger" onclick="deleteElements()" id="deleteChecked">
+                <div type="button" class="btn btn-warning btnBlock" data-toggle="modal" data-target="#modifyModal" onclick="modifyElements()">
+                    Modificar
+                </div>
+                <div type="button" class="btn btn-danger btnBlock" onclick="deleteElements()">
                     Eliminar
                 </div>
             </div>
@@ -57,8 +59,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn" id="tableFormBTN" onclick="$('#tableForm').submit()"
-                    data-dismiss="modal">Crear</button>
+                <button type="button" class="btn btn-success" onclick="$('#tableForm').submit()">Crear</button>
             </div>
         </div>
     </div>
@@ -66,37 +67,97 @@
 
 <!-- Modal -->
 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <button type="button" class="close ms-auto me-3" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <form class="row">
+            <div>
+                <button type="button" class="close mx-3 mt-1" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="row fureyForm" id="createForm" method="PUT" action="/tables/{{title}}">
                 <div class="col-12">
                     <div class="modal-header pt-0">
-                        <h5 class="modal-title">OPERACIÓN</h5>
+                        <h5 class="modal-title">FUNCIONES</h5>
+                    </div>
+                    <div class="modal-body mx-4">
+                        <input type="hidden" name="target" value="fun">
+                        <div class="form-group row justify-content-center">
+                            <div class="align-self-center text-right text-gray-900 text-lg col-12 col-md-5">
+                                Aplicar sobre la columna:
+                            </div>
+                            <select class="custom-select custom-select-md text-capitalize col-12 col-md-7" name="col">
+                            </select>
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <div class="align-self-center text-right text-gray-900 text-lg col-12 col-md-5">
+                                Operación:
+                            </div>
+                            <select class="custom-select custom-select-md text-capitalize col-12 col-md-7" name="operation" style="width: 200px;">
+                                <option value="sum">Suma +</option>
+                                <option value="min">Resta -</option>
+                                <option value="up">Suba +%</option>
+                                <option value="down">Baja -%</option>
+                                <option value="percent">Porcentaje %</option> 
+                            </select>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="align-self-center text-right text-gray-900 text-lg col-12 col-md-5">
+                                Cantidad:
+                            </div>
+                            <div class="m-0 p-0 col-12 col-md-7">
+                                <input type="text" name="cantidad" class="form-control" placeholder="75.7">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-md-6">
+                    <div class="modal-header pt-0">
+                        <h5 class="modal-title">PERMANENTE</h5>
+                    </div>
+                    <div class="modal-body">
+                                                <div class="form-group row justify-content-center">
+                            <div class="align-self-center text-right text-gray-900 text-lg col-12 col-md-5">
+                                Aplicar sobre la columna:
+                            </div>
+                            <select class="custom-select custom-select-md text-capitalize col-12 col-md-7" name="col">
+                            </select>
+                        </div>
+                        <div class="form-group row justify-content-center">
+                            <div class="align-self-center text-right text-gray-900 text-lg col-12 col-md-5">
+                                Operación:
+                            </div>
+                            <select class="custom-select custom-select-md text-capitalize col-12 col-md-7" name="operation" style="width: 200px;">
+                                <option value="sum">Suma +</option>
+                                <option value="min">Resta -</option>
+                                <option value="up">Suba +%</option>
+                                <option value="down">Baja -%</option>
+                                <option value="percent">Porcentaje %</option> 
+                            </select>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="align-self-center text-right text-gray-900 text-lg col-12 col-md-5">
+                                Cantidad:
+                            </div>
+                            <div class="m-0 p-0 col-12 col-md-7">
+                                <input type="text" name="cantidad" class="form-control" placeholder="75.7">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
                     <div class="modal-header pt-0">
                         <h5 class="modal-title">VISIBLES</h5>
                     </div>
                     <div class="modal-body">
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="modal-header pt-0">
-                        <h5 class="modal-title">PERMANENTE</h5>
-                    </div>
-                    <div class="modal-body">
-                    </div>
-                </div>
-
             </form>
-            <div class="modal-footer">
+            <div class="modal-footer contApply">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" id="createFormBTN" onclick="$('#createForm').submit()"
-                    data-dismiss="modal">Crear</button>
+                <button type="button" class="btn btn-success" id="createFormBTN" onclick="$('#createForm').submit()">Aplicar</button>
+            </div>
+            <div class="modal-footer bg-gradient-danger w-100 h-100 text-lg text-gray-100 justify-content-center contDeny">
+                Deberías de haber seleccionado al menos un elemento de la tabla.
             </div>
         </div>
     </div>
@@ -126,16 +187,16 @@
                                 <input type="text" name="name" class="form-control" id="colNameInput">
                             </div>
                             <div class="form-group">
-                                <label for="selectAppendForm" class="text-capitalize">Insertar a la izquierda de:</label>
-                                <select class="custom-select custom-select-md text-capitalize" name="beforeof"
+                                <label for="selectAppendForm" class="text-capitalize">Insertar a la derecha
+                                    de:</label>
+                                <select class="custom-select custom-select-md text-capitalize" name="afterof"
                                     id="selectAppendForm">
                                 </select>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" id="appendFormBTN" onclick="$('#appendForm').submit()"
-                            data-dismiss="modal">Crear</button>
+                        <button type="button" class="btn btn-success" onclick="$('#appendForm').submit()">Crear</button>
                     </div>
                 </div>
                 <div class="col-12 col-md-5">
@@ -148,15 +209,18 @@
                             <input type="hidden" name="tableid" value="{{title}}">
                             <div class="form-check ms-4">
                                 <input type="checkbox" class="form-check-input" name="full" value="full"
-                                    id="deleteCheckItemFull">
+                                    id="deleteCheckTable">
+                                <label class="form-check-label" for="deleteCheckTable"><strong><code>TABLA</code></strong></label>
+                            </div>
+                            <div class="form-check ms-4">
+                                <input type="checkbox" class="form-check-input" id="deleteCheckItemFull">
                                 <label class="form-check-label" for="deleteCheckItemFull"><strong>TODO</strong></label>
                             </div>
                             <div class="ms-4" id="deleteCheckBoxCol"></div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="deleteFormBTN" onclick="$('#deleteForm').submit()"
-                            data-dismiss="modal">ELIMINAR</button>
+                        <button type="button" class="btn btn-danger" onclick="$('#deleteForm').submit()">ELIMINAR</button>
                     </div>
                 </div>
             </div>
@@ -164,9 +228,42 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modifyModal" tabindex="-1" aria-labelledby="modifyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modifyContentALL">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modifyModalLabel">Modificar Todas las Entrada</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <small style="font-weight: bold;font-style: italic;color: #e83e8c;">
+                    <p>Los espacios no rellenados, no serán modificados.</p>
+                </small>
+                <form action="/tables/{{title}}" method="PUT" id="modifyCheckedForm" class="fureyForm">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" onclick="$('#modifyCheckedForm').submit()">Modificar Todo</button>
+            </div>
+        </div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modificar Entrada</h5>
+                <button type="button" class="close" id="modifyClose" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modifyFormsContent"></div>
+        </div>
+    </div>
+</div>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fillTBodyTable('');
+    document.addEventListener("DOMContentLoaded", async function () {
+        await fillTBodyTable('');
         fillFormTable();
     });
 </script>

@@ -34,8 +34,6 @@ router.put('/admin/object', (req, res) => new ADMIN(req, res).setObject());
 router.put('/admin/object/:id', (req, res) => new ADMIN(req, res).reSetObject());
 
 router.put('/tables/:table', (req, res) => new TABLES(req, res).setElement());
-router.put('/tables/:table/:id', (req, res) => new TABLES(req, res).reSetElement());
-
 
 //DELETE REQUEST
 router.delete('/admin/object/:table', (req, res) => new ADMIN(req, res).removeObject());

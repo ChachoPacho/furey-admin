@@ -1,6 +1,9 @@
 const {
     getConnection
 } = require('../database');
+const {
+    v4
+} = require('uuid');
 
 class ADMIN {
     #objects = {
@@ -51,8 +54,10 @@ class ADMIN {
     #createCol() {
         //AÑADE LA COLUMNA EN LA POSICIÓN DADA, EN ADMIN.TABLES
         const newStructure = this.table.value();
-        (this.body.beforeof === "admin") ? newStructure.__SHOW.push(this.name) : newStructure.__SHOW.splice(newStructure.__SHOW.indexof(this.body.beforeof), 0, this.name);
-        newStructure.__ALL[this.name] = this.name;
+        const id = v4();
+        (this.body.afterof === "check") ? newStructure.__SHOW.unshift(id) : newStructure.__SHOW.splice(newStructure.__SHOW.indexOf(this.body.afterof) + 1, 0, id);
+        newStructure.__ALL[id] = this.name;
+        newStructure.__COL.push(id);
 
         this.table.assign(newStructure).write();
         //
@@ -62,7 +67,10 @@ class ADMIN {
         this.DB.set(this.tableName, []).write();
         this.tables.set(this.tableName, {
             __SHOW: [],
-            __ALL: {}
+            __ALL: {},
+            __COL: [],
+            __CAT: [],
+            __REL: {}
         }).write();
     }
 
@@ -73,13 +81,13 @@ class ADMIN {
     }
 
     #updateUtil() {
-        const __ALL = this.table.value().__ALL;
+        const __ALL = Object.keys(this.table.value().__ALL);
         const newShow = [];
-        for (let index in Object.keys(__ALL)) {
+        for (let index in __ALL) {
             let pos = parseInt(this.body.pos[index]) - 1;
             if (pos == -1) continue;
 
-            let element = Object.values(__ALL)[index];
+            let element = __ALL[index];
             (newShow[pos]) ? newShow.splice(pos + 1, 0, element): newShow[pos] = element;
         }
         this.table.set('__SHOW', newShow.filter(Boolean)).write();
@@ -102,7 +110,7 @@ class ADMIN {
 
             this.tables.unset(this.params.table).write();
 
-            this.res.status(500).send(req.protocol + '://' + req.hostname + ':' + (process.env.PORT || 3000));
+            this.res.send("REDIRECT");
         } else {
             if (this.body.col) {
                 for (const col of this.body.col) {
@@ -112,7 +120,8 @@ class ADMIN {
                         }).unset(col).write();
                     }
                     this.table.get('__SHOW').pull(col).write();
-                    this.table.get('__ALL').pull(col).write();
+                    this.table.get('__COL').pull(col).write();
+                    this.table.unset('__ALL.' + col).write();
                 }
             }
             if (this.body.rel) {

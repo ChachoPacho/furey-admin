@@ -2,9 +2,15 @@
   "admin": {
     "tables": {
       "products": {
+        "__COL": [
+          "nombre",
+          "cod",
+          "precio"
+        ],
+        "__CAT": [],
+        "__REL": {},
         "__ALL": {
           "nombre": "nombre",
-          "categoria": "categoría",
           "cod": "cod",
           "precio": "precio"
         },
@@ -14,32 +20,26 @@
           "precio"
         ]
       },
-      "clientes": {
-        "__ALL": {
-          "teléfono": "teléfono",
-          "nombre": "nombre"
-        },
-        "__SHOW": [
-          "nombre",
-          "teléfono"
-        ]
-      },
-      "materiales": {
-        "__ALL": {
-          "telefono": "teléfono",
-          "nombre": "nombre"
-        },
-        "__SHOW": [
-          "teléfono",
-          "nombre"
-        ]
-      },
       "productos": {
         "__SHOW": [
-          "nombre"
+          "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a",
+          "061109ac-24a7-4c63-b468-60d4afe7e4eb",
+          "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46",
+          "99c141c1-7aa4-42c2-9814-9dad6fe1be17"
         ],
+        "__COL": [
+          "061109ac-24a7-4c63-b468-60d4afe7e4eb",
+          "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a",
+          "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46",
+          "99c141c1-7aa4-42c2-9814-9dad6fe1be17"
+        ],
+        "__CAT": [],
+        "__REL": {},
         "__ALL": {
-          "nombre": "nombre"
+          "061109ac-24a7-4c63-b468-60d4afe7e4eb": "nombre",
+          "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": "código",
+          "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": "costo",
+          "99c141c1-7aa4-42c2-9814-9dad6fe1be17": "precio"
         }
       }
     }
@@ -49,38 +49,32 @@
       {
         "id": "23214234234234",
         "nombre": "Escobillón",
-        "cod": "1232",
-        "precio": 2500
+        "cod": 1232,
+        "precio": 2000
       },
       {
         "id": "3a195233-e3b0-43ee-aacf-779806c3eaaa",
-        "nombre": "Platos",
+        "nombre": "Plato",
         "cod": "1234",
-        "precio": 124
+        "precio": 1500
       },
       {
         "id": "7974f7ae-a93e-4a69-945f-bb978ab0e3e2",
         "nombre": "Escoba",
         "cod": 123,
-        "precio": 2500
-      },
-      {
-        "id": "238de7ca-2573-48af-ba51-6139464f9d73",
-        "nombre": "Nose",
-        "cod": "2314",
-        "precio": 1232
+        "precio": 6000
       },
       {
         "id": "eab11687-8cff-44d7-b2ef-ace677465fee",
         "nombre": "Aspiradora",
         "cod": 213,
-        "precio": 123
+        "precio": 1200
       },
       {
         "id": "9a090cdf-00f9-4b3f-b411-d3dca2b03414",
         "nombre": "Cachuna2.0",
         "cod": 213,
-        "precio": 200
+        "precio": 1400
       },
       {
         "id": "cd1e9eaf-84f2-40b4-a3ce-9bbc0bce3aa7",
@@ -95,12 +89,6 @@
         "precio": 9999
       },
       {
-        "nombre": "DinoRex",
-        "cod": 1234,
-        "precio": 999,
-        "id": "0716983f-fa21-4665-9d33-9d8faf8c4a1c"
-      },
-      {
         "nombre": "Termopilas",
         "cod": 7451,
         "precio": 12457,
@@ -113,36 +101,45 @@
         "id": "b5e3f3e1-617d-4cf4-9fa7-5cd18f2f10de"
       },
       {
-        "nombre": "Lerolero",
-        "cod": 123,
-        "precio": 750,
-        "id": "2d3cb627-83c5-4c9f-a644-4f61aa69ac71"
-      }
-    ],
-    "clientes": [
-      {
-        "nombre": "Juan Perez",
-        "teléfono": "2456751",
-        "id": "40477e25-06c5-4900-91dd-7bf9d0464a5b"
+        "nombre": "Plato",
+        "cod": 1234,
+        "precio": 1750,
+        "id": "ddf0d54d-9ee9-4f24-b318-45c2f7284001"
       },
       {
-        "nombre": "Enzo Rolega",
-        "teléfono": "2486757",
-        "id": "056b3015-a620-4318-a1df-a008596cf1c1"
-      }
-    ],
-    "materiales": [
-      {
-        "nombre": "Gonzalo",
-        "telefono": 547345,
-        "id": "1b4e38a2-5624-464a-9ed2-2b77e2bf12e7"
+        "nombre": "Plato",
+        "cod": 1234,
+        "precio": 1750,
+        "id": "b11e0fda-5706-4e7c-9a2f-bd11dd607bd9"
       },
       {
-        "nombre": "Juan",
-        "telefono": 546875135,
-        "id": "f0856a8d-c2ab-4dc9-9b29-62634016f5dc"
+        "nombre": "Plato",
+        "cod": 1234,
+        "precio": 1750,
+        "id": "91c460fd-cdb6-4108-9e60-fa14f87f79ce"
+      },
+      {
+        "nombre": "Plato",
+        "cod": 1234,
+        "precio": 1750,
+        "id": "794e5cdf-a4be-492e-a28a-bb8fed0d8ecb"
       }
     ],
-    "productos": []
+    "productos": [
+      {
+        "061109ac-24a7-4c63-b468-60d4afe7e4eb": "Platos de Madera",
+        "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": 1,
+        "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": 250,
+        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 800,
+        "id": "160dc94c-6449-4873-9357-332ab9d56d0c"
+      },
+      {
+        "061109ac-24a7-4c63-b468-60d4afe7e4eb": "Platos de Vidrio",
+        "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": 2,
+        "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": 300,
+        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 950,
+        "id": "59ccba84-0190-41a4-8feb-c4a7e6b339e8"
+      }
+    ]
   }
 }

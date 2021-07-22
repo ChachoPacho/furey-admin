@@ -28,15 +28,15 @@ const fillTBodyTable = async data => {
 
     const order = (data) ? (data.orderby[1] === "desc") ? 'asc' : 'desc' : 'desc';
 
-    let tableHeader = `<th class="text-center" style="width: 50px"><input class="h-100 w-100" type="checkbox" id="checkALL"></th>`;
-    let tableFooter = `<th class="text-center" style="width: 50px"></th>`;
+    let tableHeader = `<th class="text-center" style="width:40px"><input type="checkbox" id="checkALL"></th>`;
+    let tableFooter = `<th class="text-center" style="width:40px"></th>`;
     let tableContEnd = '';
 
     for (const element of elements) {
         tableContEnd += `
             <tr id="` + element['id'] + `">
-                <td style="width: 50px">
-                    <input class="h-100 w-100" type="checkbox">
+                <td class="text-center" style="width:40px">
+                    <input type="checkbox">
                 </td>
             `
 
@@ -44,15 +44,7 @@ const fillTBodyTable = async data => {
             tableContEnd += "<td>" + element[index] + "</td>";
         }
 
-        tableContEnd += `
-            <td style="width: 50px">
-                <div class="d-flex justify-content-around">
-                    <a href="" onclick="changeModaltoUpdate('` + table + "', '" + element['id'] + `')" class="btn btn-warning btn-circle btn-sm" data-toggle="modal" data-target="#tableModal" type="button">
-                        <i class="fas fa-flag"></i>
-                    </a>
-                </div>
-            </td>
-        </tr>`;
+        tableContEnd += `</tr>`;
     }
 
     for (const index of __SHOW) {
@@ -83,13 +75,10 @@ const fillTBodyTable = async data => {
             `;
         tableFooter += `
             <th class="text-capitalize">
-                <div>${index}</div>
+                <div>${__ALL[index]}</div>
             </th>
             `;
     }
-
-    tableHeader += `<th class="text-center">ADMIN</th>`;
-    tableFooter += `<th class="text-center">ADMIN</th>`;
 
     $('#dataTable thead tr').html(tableHeader);
     $('#dataTable tfoot tr').html(tableFooter);
@@ -107,7 +96,7 @@ const fillFormTable = async () => {
 
     let table = '';
     let checkBoxCol = '';
-    let select = "<option value='admin' selected>ADMIN</option>"
+    let select = ""
 
     for (const index in __ALL) {
         checkBoxCol += `
@@ -124,11 +113,11 @@ const fillFormTable = async () => {
     }
 
     $('#tableForm').html(table);
-    $('#selectAppendForm').html(select);
+    $('#selectAppendForm').html("<option value='check' selected>CHECK</option>" + select);
+    $('#selectCreateForm').html(select);
     $('#deleteCheckBoxCol').html(checkBoxCol);
     __afterFill();
 }
-
 
 //UTILITIES
 const fillUtilitiesTable = async () => {
@@ -154,7 +143,7 @@ const fillUtilitiesTable = async () => {
             <div class="border-left-dark">
                 <div class="card-body py-2 px-3 text-capitalize">
                     <div class="row">
-                        <div class="col-6">${element}</div>
+                        <div class="col-6">${__ALL[element]}</div>
                         <div class="col-6 d-flex">
                             <input class="w-50 mx-auto" type="number" value="${pos}" name="pos[]" min="0" max="${qElements}">
                         </div>
