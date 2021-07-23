@@ -9,13 +9,21 @@ class ADMIN {
     #objects = {
         create: {
             table: 'this.#createTable()',
-            col: 'this.#createCol()'
+            col: 'this.#createCol()',
+            rel: 'this.#createRel()'
         },
         update: {
             util: 'this.#updateUtil()',
-            col: 'this.#updateCol()'
+            col: 'this.#updateCol()',
+            rel: 'this.#updateRel()'
         }
     }
+    static regexID = /(?<=\{)\d+(?=\})/g;
+    static regexUP = /(?<=\+\%\{)\d+(?=\})/g;
+    static regexDOWN = /(?<=\-\%\{)\d+(?=\})/g;
+
+    static simple_RegexUP = /(?<=\+\%)\d+/g;
+    static simple_RegexDOWN = /(?<=\-\%)\d+/g;
 
     constructor(req, res) {
         this.params = req.params;
@@ -60,7 +68,46 @@ class ADMIN {
         newStructure.__COL.push(id);
 
         this.table.assign(newStructure).write();
-        //
+    }
+    #createRel() {
+        //AÑADE LA RELACIÓN
+        this.body.function = this.body.function
+            .replaceAll(" ", "")
+            .replaceAll("\n", "")
+            .replaceAll("\r", "")
+            .replaceAll("&nbsp;", "");
+        let ids = (this.body.function.match(ADMIN.regexID) || []);
+        let ups = (this.body.function.match(ADMIN.regexUP) || []);
+        let downs = (this.body.function.match(ADMIN.regexDOWN) || []);
+        let __ALL = Object.keys(this.table.value().__ALL);
+
+        let replace;
+        let fun;
+
+        for (const id of ids) {
+            replace = "";
+            fun = "(";
+            if (ups.includes(String(id))) {
+                replace = "+%";
+                fun = "*(1+(1/100)*"
+            } else if (downs.includes(String(id))) {
+                replace = "-%";
+                fun = "*(1-(1/100)*"
+            }
+            this.body.function = this.body.function.replace(`${replace}{${id}}`, `${fun}ELEM["${__ALL[id]}"])`);
+        }
+
+        ups = (this.body.function.match(ADMIN.simple_RegexUP) || []);
+        ups.forEach(e => {this.body.function = this.body.function.replace(`+%${e}`, `*(1+(1/100)*${e})`)})
+
+        downs = (this.body.function.match(ADMIN.simple_RegexDOWN) || []);
+        downs.forEach(e => {this.body.function = this.body.function.replace(`-%${e}`, `*(1-(1/100)*${e})`)})
+
+        const id = v4();
+        this.table.get('__REL').assign({[id]: this.body.function.replace("%", "*(1/100)*")}).write();
+        this.table.get('__ALL').assign({[id]: this.name}).write();
+        this.table.get('__SHOW').push(id).write();
+        //( ( {1} * 0.5 ) - {2} ) +% 21
     }
 
     #createTable() {

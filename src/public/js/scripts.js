@@ -16,60 +16,82 @@ const fillAsideMenu = async () => {
 const fillTBodyTable = async data => {
     const table = $("#dataTable").attr("tableid");
     let elements = await getElements(data);
-    const search = $('#webSearch').val() || $('#mobileSearch').val();
-    elements = (search) ? filterSearch(elements, search) : elements;
+    elements = filterSearch(elements);
     const {
         __ALL,
-        __SHOW
+        __SHOW,
+        __REL
     } = (await getData({
         "table": true,
         "tableid": table
     })).table;
 
-    const order = (data) ? (data.orderby[1] === "desc") ? 'asc' : 'desc' : 'desc';
+    if (data) {
+        var order = (data.orderby[1] === "desc") ? 'asc' : 'desc';
+        localStorage.setItem('orderby', order);
+    } else {
+        var order = 'desc';
+        localStorage.removeItem('orderby');
+    };
+    const relations = Object.keys(__REL);
 
     let tableHeader = `<th class="text-center" style="width:40px"><input type="checkbox" id="checkALL"></th>`;
     let tableFooter = `<th class="text-center" style="width:40px"></th>`;
     let tableContEnd = '';
+    let cont = "";
+    let text = "";
 
-    for (const element of elements) {
+    for (const ELEM of elements) {
         tableContEnd += `
-            <tr id="` + element['id'] + `">
+            <tr id="` + ELEM['id'] + `">
                 <td class="text-center" style="width:40px">
                     <input type="checkbox">
                 </td>
             `
 
         for (const index of __SHOW) {
-            tableContEnd += "<td>" + element[index] + "</td>";
+            if (relations.includes(index)) {
+                cont = " related='true'>" + eval(__REL[index]);
+            } else {
+                cont = ">" + ELEM[index];
+            }
+            tableContEnd += "<td" + cont + "</td>";
         }
 
         tableContEnd += `</tr>`;
     }
 
     for (const index of __SHOW) {
+        if (relations.includes(index)) {
+            cont = "";
+            text = "text-uppercase text-primary";
+        } else {
+            cont = `
+            <div class="ms-auto" type="button" id="menu-${index}"
+                onclick="orderBy('${index}','${order}')">
+                <i class="fas fa-arrows-alt-v"></i>
+            </div>`;
+            text = "text-capitalize";
+        }
         tableHeader += `
             <th>
                 <div class="d-flex">
                     <div class="dropdown">
-                        <div class="dropdown-toggle text-capitalize" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="${text}" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             ${__ALL[index]}
                         </div>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <form class="d-flex fureyForm" action="/admin/object/${table}" method="PUT">
                                 <input type="hidden" name="objtype" value="col">
                                 <input type="hidden" name="origin" value="${index}">
-                                <input class="mt-0 mx-2 p-1 text-capitalize" type="text" name="field" value="${__ALL[index]}">
+                                <input class="mt-0 mx-2 p-1 ${text}" type="text" name="field" value="${__ALL[index]}">
                                 <button type="submit" class="btn btn-warning me-2 p-1">
                                     <span class="text">Actualizar</span>
                                 </button>
                             </form>
                         </div>
                     </div>
-                    <div class="ms-auto" type="button" id="menu-${index}"
-                        onclick="orderBy('${index}','${order}')">
-                        <i class="fas fa-arrows-alt-v"></i>
-                    </div>
+                    ${cont}
                 </div>
             </th>
             `;
@@ -83,7 +105,6 @@ const fillTBodyTable = async data => {
     $('#dataTable thead tr').html(tableHeader);
     $('#dataTable tfoot tr').html(tableFooter);
     $('#dataTable tbody').html(tableContEnd);
-    table_animate();
 }
 
 const fillFormTable = async () => {
@@ -96,7 +117,9 @@ const fillFormTable = async () => {
 
     let table = '';
     let checkBoxCol = '';
-    let select = ""
+    let select = "";
+    let indexHelp = "";
+    let i = 0;
 
     for (const index in __ALL) {
         checkBoxCol += `
@@ -110,14 +133,30 @@ const fillFormTable = async () => {
             <input type="text" name="${index}" class="form-control" id="${index}FormInput">
         </div>`;
         select += `<option value="${index}">${__ALL[index]}</option>`;
+        indexHelp += `<code class="mx-4 text-nowrap text-capitalize">${__ALL[index]}: "{${i}}"</code>`;
+        i++;
     }
 
     $('#tableForm').html(table);
     $('#selectAppendForm').html("<option value='check' selected>CHECK</option>" + select);
-    $('#selectCreateForm').html(select);
+    $('#selectModifyForm').html(select);
     $('#deleteCheckBoxCol').html(checkBoxCol);
+    $('#functionIndex').html(indexHelp);
     __afterFill();
+    table_animate();
 }
+
+const fillRelateds = async (data, elem, id) => {
+    const {__REL, __SHOW} = data;
+    if (__REL) {
+        const relateds = elem.siblings('td[related]');
+        const ELEM = await getElements({search: ['id', id[0]]});
+        for (const elem of relateds) {
+            $(elem).html(eval(__REL[__SHOW[$(elem).index() - 1]]));
+        }
+    }
+}
+
 
 //UTILITIES
 const fillUtilitiesTable = async () => {

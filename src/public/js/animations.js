@@ -6,55 +6,39 @@ const modifyElements = async () => {
         'tableid': TABLE
     })).table
     let table = "";
-    let tableALL = '<input type="hidden" name="target" value="col">';
     const elementsChecked = $("td > input[type=checkbox]:checked");
-    let i = 0;
 
     if (elementsChecked.length > 1) {
-        $('#modifyClose').hide();
+        $('#modifyContentONE').hide();
         $('#modifyContentALL').show();
+        $('#modifyModalDialog').addClass('modal-xl');
+        for (const index in __ALL) {
+            table += `
+            <div class="form-group d-flex">
+                <p class="text-capitalize my-auto">${__ALL[index]}:</p>
+                <input type="text" name="${index}" class="form-control ms-auto w-75">
+            </div>`;
+        }
+        $('#modifyCheckedForm').html('<input type="hidden" name="target" value="col">' + table);
     } else {
-        $('#modifyClose').show();
+        $('#modifyContentONE').show();
         $('#modifyContentALL').hide();
-    }
-
-    for (const elementChecked of elementsChecked.parents('tr')) {
-
-        let id = $(elementChecked).attr('id');
+        $('#modifyModalDialog').removeClass('modal-xl');
+        let id = elementsChecked.parents('tr').attr('id');
         const element = await getElements({
             search: ["id", id]
         });
 
-        table += `
-        <form action="/tables/${TABLE}" method="PUT" id="modifyForm-${i}" class="fureyForm border-bottom-info mb-3">
-            <input type="hidden" name="target" value="col">
-            <input type="hidden" name="id" value="${id}">
-        `
-
         for (const index in __ALL) {
-            if (elementsChecked.length > 1 && i == 0) {
-                tableALL += `
-                <div class="form-group d-flex">
-                    <p class="text-capitalize my-auto">${__ALL[index]}:</p>
-                    <input type="text" name="${index}" class="form-control ms-auto w-75">
-                </div>`;
-            }
             table += `
             <div class="form-group d-flex">
                 <p class="text-capitalize my-auto">${__ALL[index]}:</p>
                 <input type="text" name="${index}" class="form-control ms-auto w-75" value="${element[index]}">
             </div>`;
         }
-        table += `
-            <div class="w-100 d-flex">
-                <button type="button" class="btn btn-warning ms-auto mb-2" onclick="$('#modifyForm-${i}').submit()">Modificar</button>
-            </div>
-        </form>
-        `
-        i++;
+        $('#modifyForm').html(`<input type="hidden" name="target" value="col"><input type="hidden" name="id[]" value="${id}">` + table);
     }
-    $('#modifyCheckedForm').html(tableALL);
-    $('#modifyFormsContent').html(table);
+    
     __afterFill();
 }
 
@@ -66,18 +50,20 @@ const tr_animate = () => {
 };
 
 const td_animate = () => {
-    $('tbody > tr > td:not(:first-child)').dblclick(e => {
+    $('tbody > tr > td:not(:first-child):not([related])').dblclick(e => {
         let elem = $(e.currentTarget);
         if (!elem.children().length) elem.html(`<input type="text" value="${elem.html()}">`).children()[0].focus() ;
     }).on("focusout keydown", async e => {
         if (!(e.type === "keydown" && e.keyCode !== 13)) {
+            const data = (await getData({'table': true, 'tableid': TABLE })).table;
+
             let elem = $(e.currentTarget);
             let newValue = elem.children()[0].value;
             let id = [elem.html(newValue).parents('tr').attr('id')];
-            let col = (await getData({'table': true, 'tableid': TABLE })).table.__SHOW[elem.index() - 1];
+            let col = data.__SHOW[elem.index() - 1];
     
-            console.log({ id: {[id]: newValue}, col: [col]})
-            setData({ id: {[id]: newValue}, col: [col]});
+            await setData({ id: id, [col]: newValue });
+            fillRelateds(data, elem, id);
         }
     })
 }

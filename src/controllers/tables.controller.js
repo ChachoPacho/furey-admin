@@ -34,6 +34,10 @@ class TABLES {
 
     #parseBody() {
         for (const key in this.body) {
+            if (!this.body[key]) {
+                delete this.body[key];
+                continue
+            };
             if ((Array.isArray(this.body[key]) || typeof this.body[key] === 'string') && key === 'id') continue;
             if (this.body[key] instanceof Object) {
                 for (const index in this.body[key]) {
@@ -47,7 +51,7 @@ class TABLES {
         }
     }
 
-    #relPerm(res, id) {
+    #relPerm(res) {
         switch (this.body.operation) {
             case 'sum':
                 res += this.body.cantidad;
@@ -65,7 +69,6 @@ class TABLES {
                 res *= this.body.cantidad / 100;
                 break;
             default:
-                res = this.body.id[id];
                 break;
         }
         return res
@@ -80,22 +83,27 @@ class TABLES {
                     id = (Array.isArray(this.body.id)) ? this.body.id[id] : id;
                     let elem = this.table.find({id});
 
-                    if (this.body.target !== "col") {
+                    if (this.body.target === "fun") {
+                        // MODIFICA SOLO UNA COLUMNA DE UN ELEMENTO DE LA DB APLICANDO UNA FUNCIÓN
                         for (let col of this.body.col) {                        
-                            elem.assign({[col]: this.#relPerm(elem.get(col).value(), id)}).write();
+                            elem.assign({[col]: this.#relPerm(elem.get(col).value())}).write();
                         }
                     } else {
+                        // MODIFICA SOLO UNA COLUMNA DE UN ELEMENTO DE LA DB
                         for (let col in this.body) {
-                            if (['id', 'target'].includes(col) || this.body[col] === "") continue;
+                            if (['id', 'target'].includes(col)) continue;
                             elem.assign({[col]: this.body[col]}).write();
                         }
                     }
                 }
             } else {
+                // MODIFICA COMPLETAMENTE UN ELEMENTO DE LA DB
                 this.body.id = this.body.id[0];
+                delete this.body.target;
                 this.table.find({id: this.body.id}).assign(this.body).write()
             };
         } else {
+            // CREA UN NUEVO ELEMENTO EN DB
             this.body['id'] = v4();
             (this.table.value()) ? this.table.push(this.body).write(): this.DB.set(this.params.table, [this.body]).write();
         }

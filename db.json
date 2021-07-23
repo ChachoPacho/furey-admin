@@ -41,6 +41,32 @@
           "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": "costo",
           "99c141c1-7aa4-42c2-9814-9dad6fe1be17": "precio"
         }
+      },
+      "marcus": {
+        "__SHOW": [
+          "ed02c219-0d7d-414d-b2e0-878ac4499254",
+          "fc7970fe-4e4f-4d8c-889c-b47d8783013e",
+          "5c8587ab-d5b6-47cc-97e5-48ec054e2fd4",
+          "89367fdc-df9e-4444-acc4-c4138704e446",
+          "42fbbef0-2195-4605-9fc0-3d62b9d305e8"
+        ],
+        "__ALL": {
+          "ed02c219-0d7d-414d-b2e0-878ac4499254": "nombre",
+          "fc7970fe-4e4f-4d8c-889c-b47d8783013e": "código",
+          "5c8587ab-d5b6-47cc-97e5-48ec054e2fd4": "precio",
+          "89367fdc-df9e-4444-acc4-c4138704e446": "iva",
+          "42fbbef0-2195-4605-9fc0-3d62b9d305e8": "suma"
+        },
+        "__COL": [
+          "ed02c219-0d7d-414d-b2e0-878ac4499254",
+          "fc7970fe-4e4f-4d8c-889c-b47d8783013e",
+          "5c8587ab-d5b6-47cc-97e5-48ec054e2fd4"
+        ],
+        "__CAT": [],
+        "__REL": {
+          "89367fdc-df9e-4444-acc4-c4138704e446": "(((ELEM[\"fc7970fe-4e4f-4d8c-889c-b47d8783013e\"])*0.5)-(ELEM[\"5c8587ab-d5b6-47cc-97e5-48ec054e2fd4\"]))*(1+(1/100)*21)",
+          "42fbbef0-2195-4605-9fc0-3d62b9d305e8": "(ELEM[\"fc7970fe-4e4f-4d8c-889c-b47d8783013e\"])+(ELEM[\"5c8587ab-d5b6-47cc-97e5-48ec054e2fd4\"])"
+        }
       }
     }
   },
@@ -130,16 +156,57 @@
         "061109ac-24a7-4c63-b468-60d4afe7e4eb": "Platos de Madera",
         "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": 1,
         "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": 250,
-        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 800,
+        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 10000,
         "id": "160dc94c-6449-4873-9357-332ab9d56d0c"
       },
       {
         "061109ac-24a7-4c63-b468-60d4afe7e4eb": "Platos de Vidrio",
         "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": 2,
         "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": 300,
-        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 950,
+        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 10000,
         "id": "59ccba84-0190-41a4-8feb-c4a7e6b339e8"
+      },
+      {
+        "061109ac-24a7-4c63-b468-60d4afe7e4eb": "Platos de Piedra",
+        "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": 3,
+        "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": 500,
+        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 10000,
+        "id": "9e2dba4b-eadc-4060-b96a-d84ca377cd5d"
+      },
+      {
+        "061109ac-24a7-4c63-b468-60d4afe7e4eb": "Platos de Porcelana",
+        "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": 4,
+        "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": 500,
+        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 10000,
+        "id": "3238a872-cc36-42bf-8126-a48d3e9b703d"
+      },
+      {
+        "061109ac-24a7-4c63-b468-60d4afe7e4eb": "Platos de Plástico",
+        "30a52f2b-2dcd-40c8-8d9e-0ffbd90b6f0a": 5,
+        "f15e306d-7f9d-4cbd-9bf6-7cb8a3c8fd46": 500,
+        "99c141c1-7aa4-42c2-9814-9dad6fe1be17": 10000,
+        "id": "5fa2cba7-224a-43f1-8d70-b5f00e9554c3"
+      }
+    ],
+    "marcus": [
+      {
+        "ed02c219-0d7d-414d-b2e0-878ac4499254": "Platos",
+        "fc7970fe-4e4f-4d8c-889c-b47d8783013e": 500,
+        "5c8587ab-d5b6-47cc-97e5-48ec054e2fd4": 3000,
+        "id": "4ea5da34-b445-468d-9866-d9c03777e5ab",
+        "89367fdc-df9e-4444-acc4-c4138704e446": 328354.675
+      },
+      {
+        "ed02c219-0d7d-414d-b2e0-878ac4499254": "Pirata",
+        "fc7970fe-4e4f-4d8c-889c-b47d8783013e": 3000,
+        "5c8587ab-d5b6-47cc-97e5-48ec054e2fd4": 500,
+        "id": "a2018bf1-f757-4144-b250-a82586393245"
       }
     ]
-  }
+  },
+  "posts": [],
+  "user": {
+    "name": 111
+  },
+  "count": 0
 }

@@ -1,4 +1,7 @@
-const filterSearch = (data, search) => {
+const filterSearch = (data) => {
+    let search = $('#webSearch').val() || $('#mobileSearch').val();
+    if (!search) return data;
+    
     let filter = []
     let regex = '';
     for (const letter of search.toLowerCase()) {

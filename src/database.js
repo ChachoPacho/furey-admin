@@ -6,7 +6,14 @@ let db;
 async function createConnection() {
     const adapters = new FileAsync('db.json');
     db = await lowdb(adapters);
-    db.defaults().write();
+    db.defaults(
+        {
+            admin: {
+                tables: {}
+            },
+            tables: {}
+        }
+        ).write();
 }
 
 const getConnection = () => db;

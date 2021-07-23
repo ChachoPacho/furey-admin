@@ -1,16 +1,23 @@
-const getChecked = () => {
+const getChecked = (all=false) => {
   let id = [];
   const checkeds = $("td > input[type=checkbox]:checked").parents('tr');
   checkeds.each(function () { id.push($(this).attr('id')) });
-  return id
+  return (all) ? {id: id, items: checkeds} : id ;
+}
+
+const setChecked = (ids) => {
+  for (const id of ids) {
+    $('#' + id).find("input[type=checkbox]").attr("checked", 'true');
+  }
 }
 
 const deleteElements = () => {
+  const {id, items} = getChecked(true);
   $.ajax({
     type: 'DELETE',
     url: window.location,
-    data: { id: getChecked() },
-    success: e => e
+    data: { id: id },
+    success: () => items.remove()
   })
   return false
 }
@@ -46,26 +53,28 @@ const setData = data => {
 const __afterFill = () => {
   $(".fureyForm").off()
   $(".fureyForm").submit(function (e) {
+    const id = getChecked();
     e.preventDefault();
     let data = false;
-    if ($(this).attr('id') == 'createForm' || $(this).attr('id') == 'modifyCheckedForm') {
-      data = $(this).serialize() + "&id%5B%5D=" + getChecked().join('&id%5B%5D=');
+    if ($(this).attr('id') == 'modifyCheckedForm' || $(this).attr('id') == 'modifyCheckedFormFUN') {
+      data = $(this).serialize() + "&id%5B%5D=" + id.join('&id%5B%5D=');
     }
     $.ajax({
       type: $(this).attr("method"),
       url: $(this).attr("action"),
       data: (data) ? data : $(this).serialize(),
-      success: (res) => {
+      success: async (res) => {
         if (res == "REDIRECT") $("a.nav-link[href='/']")[0].click();
         if ($(this).attr('origen') === 'settings') fillAsideMenu(); 
         else if ($(this).attr('origen') === 'utilities') fillUtilitiesTable();
         else {
-          fillTBodyTable('');
-          fillFormTable();
+            await fillTBodyTable();
+            fillFormTable();
+            setChecked(id);
         }
-        $(this)[0].reset();
       },
     });
+    this.reset()
     return false
   });
 }
